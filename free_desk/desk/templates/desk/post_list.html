@@ -1,0 +1,33 @@
+{% extends 'desk/base.html' %}
+
+{% block content %}
+
+<nav>
+	{% if user.is_authenticated %}
+		<p>Hello, {{ user.username }}!</p>
+	{% endif %}
+
+	{% if user.is_authenticated %}
+        <a href="{% url 'desk:sign_out' %}">Logout</a>
+        <a href="{% url 'desk:new_post'%}">New Post</a>
+        <a href="{% url 'desk:account'%}">My account</a>
+    {% else %}
+        <a href="{% url 'desk:sign_in' %}">Log in</a>
+        <a href="{%url 'desk:sign_up' %}">Register</a>
+	{% endif %}
+	
+
+    
+</nav>
+
+
+{% for post in posts %}
+<p>
+	{{ post.author }}<br>
+	{{ post.theme }}<br>
+	{{ post.text }}<br>
+	{{ post.pub_date }}<br>
+</p>
+{% endfor %}
+
+{% endblock %}
