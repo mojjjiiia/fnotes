@@ -2,10 +2,9 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from desk.models import Post
-from desk.forms import NewPostForm, SignUpForm, SignInForm
+from desk.forms import NewPostForm, SignUpForm, SignInForm, CustomPasswordChangeForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import PasswordChangeForm
 from django.utils import timezone
 
 
@@ -97,10 +96,10 @@ def sign_out(request):
 @login_required
 def change_pass(request):
     user = request.user
-    form = PasswordChangeForm(user)
+    form = CustomPasswordChangeForm(user)
 
     if request.method == 'POST':
-        form = PasswordChangeForm(user, request.POST)
+        form = CustomPasswordChangeForm(user, request.POST)
         if form.is_valid():
             content = form.cleaned_data
             user.set_password(content['new_password1'])
@@ -109,6 +108,7 @@ def change_pass(request):
             login(request, user)
 
             return HttpResponseRedirect(reverse('desk:index'))
+
     return render(request, 'desk/change_pass.html', {'form': form})
 
 

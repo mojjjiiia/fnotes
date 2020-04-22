@@ -36,6 +36,10 @@
           <ul class="navbar-nav ml-auto">
 
               <li class="nav-item">
+                  <a class="nav-link navbar-item-fontsize" href="{% url 'desk:index'%}">Main Page</a>
+              </li>
+
+              <li class="nav-item">
                   <a class="nav-link navbar-item-fontsize" href="{% url 'desk:new_post'%}">New Post</a>
               </li>
               <li class="nav-item">
@@ -48,6 +52,10 @@
 
           {% else %}
           <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                  <a class="nav-link navbar-item-fontsize" href="{% url 'desk:index'%}">Main Page</a>
+              </li>
+
               <li class="nav-item">
                   <a class="nav-link navbar-item-fontsize" href="{% url 'desk:sign_in' %}">Log in</a>
               </li>

@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 
 
 class NewPostForm(forms.Form):
@@ -55,3 +55,23 @@ class SignInForm(forms.Form):
                                                                                 }
                                                                          )
                                )
+
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+
+    def __init__(self, *args, **kwargs):
+        super(CustomPasswordChangeForm, self).__init__(*args, **kwargs)
+
+        self.fields['old_password'].widget = forms.PasswordInput(attrs={'class': 'input-field', 'placeholder': ' Old password',
+                                                                        }
+                                                                 )
+
+        self.fields['new_password1'].widget = forms.PasswordInput(attrs={'class': 'input-field', 'placeholder': 'New password',
+                                                                         }
+                                                                  )
+        self.fields['new_password2'].widget = forms.PasswordInput(attrs={'class': 'input-field', 'placeholder': 'Confirm password',
+                                                                         }
+                                                                  )
+
+        for name, field in self.fields.items():
+            field.help_text = None
