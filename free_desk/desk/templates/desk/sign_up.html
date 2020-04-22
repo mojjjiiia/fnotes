@@ -1,9 +1,35 @@
+{% extends 'desk/base.html' %}
 
-<form action="/sign_up/" method="post">
-	{% csrf_token %}
-    {{ form }}
-	<input type="submit" value="Send!">
+{% block content %}
 
-</form>
+<header class="header">
+	<h1>Registration</h1>
+</header>
 
-{{ form.errors }}
+<div class="borderline formbox-small">
+	<form class="block-flex-column" action="/sign_up/" method="post">
+		{% csrf_token %}
+				<label for="id_username">Username</label>
+				{{ form.username }}
+
+				<label for="id_email">Email</label>
+				{{ form.email }}
+
+				<label for="id_password1">Password</label>
+				{{ form.password1 }}
+
+				<label for="id_password2">Confirm password</label>
+				{{ form.password2 }}
+			<input type="submit" value="Send!">
+
+		<div class="error">
+			{% for _, error in form.errors.items %}
+	        {{ error }}
+			{% endfor %}
+		</div>
+
+	</form>
+</div>
+
+
+{% endblock %}

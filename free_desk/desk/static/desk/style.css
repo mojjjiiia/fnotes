@@ -1,0 +1,69 @@
+.navbar-item-fontsize {
+    font-size: 1.25em;
+}
+
+.header {
+    text-align: center;
+    margin: 40px auto 20px auto;
+}
+
+.postlist {
+    margin: auto;
+    max-width: 30em;
+}
+
+.postlist-box {
+    margin: 50px auto;
+    padding: 10px;
+    border: solid;
+    border-color: #54ed71;
+    background-color: #f1fff0;
+}
+
+.borderline {
+    margin: 0 15px;
+    padding: 10px;
+    border: solid;
+    border-color: #54ed71
+}
+
+.text-bold {
+    font-weight: bold;
+}
+
+.text-italic {
+    font-style: italic;
+}
+
+.block-flex-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.input-field {
+    margin: 10px auto;
+    width: 90%;
+}
+
+.error {
+    font-weight: bold;
+    color: #e80808;
+
+}
+
+.formbox-large {
+    max-width: 700px;
+    margin: 0 auto;
+    background-color: #f1fff0;
+}
+
+.formbox-small {
+    max-width: 400px;
+    margin: 0 auto;
+    background-color: #f1fff0;
+}
+
+.main-bgcolor {
+    background-color: #e7f7ea;
+}

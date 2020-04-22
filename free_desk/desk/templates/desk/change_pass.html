@@ -1,3 +1,6 @@
+{% extends 'desk/base.html' %}
+
+{% block content %}
 
 <form action="{% url 'desk:change_pass' %}" method="post">
 	{% csrf_token %}
@@ -7,3 +10,5 @@
 </form>
 
 {{ form.errors }}
+
+{% endblock %}

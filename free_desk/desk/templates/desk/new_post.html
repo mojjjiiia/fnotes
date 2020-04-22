@@ -1,6 +1,20 @@
-<form action="/new_post/" method="post">
-	{% csrf_token %}
-    {{ form.as_p }}
-	<input type="submit" value="Send!">
+{% extends 'desk/base.html' %}
 
-</form>
+{% block content %}
+
+	<header class="header">
+		<h1>Create new post!</h1>
+	</header>
+
+	<div class="borderline formbox-large" >
+		<form  class="block-flex-column" action="{% url 'desk:new_post' %}" method="post">
+{% csrf_token %}
+					{{ form.subject }}
+					{{ form.text }}
+			<input type="submit" value="Send!">
+
+		</form>
+	</div>
+
+
+{% endblock %}

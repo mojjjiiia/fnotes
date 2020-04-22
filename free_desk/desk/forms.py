@@ -4,17 +4,54 @@ from django.contrib.auth.forms import UserCreationForm
 
 
 class NewPostForm(forms.Form):
-    theme = forms.CharField(max_length=60)
-    text = forms.CharField(max_length=255, widget=forms.Textarea)
+    subject = forms.CharField(max_length=60,
+                              widget=forms.TextInput(attrs={'class': 'input-field',
+                                                            'placeholder': 'Post Subject',
+                                                            }
+                                                     )
+                              )
+
+    text = forms.CharField(max_length=1000,
+                           widget=forms.Textarea(attrs={'class': 'input-field',
+                                                        'style': 'resize: none'
+                                                        }
+                                                 )
+                           )
 
 
 class SignUpForm(UserCreationForm):
+    def __init__(self, *args, **kwargs):
+        super(SignUpForm, self).__init__(*args, **kwargs)
+
+        self.fields['password1'].widget = forms.PasswordInput(attrs={'class': 'input-field', 'placeholder': 'Password',
+                                                                     }
+                                                              )
+
+        self.fields['password2'].widget = forms.PasswordInput(attrs={'class': 'input-field', 'placeholder': 'Confirm password',
+                                                                     }
+                                                              )
 
     class Meta:
         model = User
         fields = ["username", "email"]
+        widgets = {'username': forms.TextInput(attrs={'class': 'input-field',
+                                                      'placeholder': 'Username',
+                                                      }
+                                               ),
+                   'email': forms.EmailInput(attrs={'class': 'input-field',
+                                                    'placeholder': 'Email',
+                                                    }
+                                             ),
+                   }
 
 
 class SignInForm(forms.Form):
-    username = forms.CharField(max_length=100)
-    password = forms.CharField(max_length=64, widget=forms.PasswordInput)
+    username = forms.CharField(max_length=100,
+                               widget=forms.TextInput(attrs={'class': 'input-field', 'placeholder': 'Enter username',
+                                                             }
+                                                      )
+                               )
+    password = forms.CharField(max_length=64, widget=forms.PasswordInput(attrs={'class': 'input-field', 'placeholder': 'Enter password',
+                                                                                }
+                                                                         )
+                               )

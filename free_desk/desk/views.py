@@ -23,7 +23,7 @@ def new_post(request):
         if form.is_valid():
             post = Post(
                 author=request.user,
-                theme=form.cleaned_data['theme'],
+                subject=form.cleaned_data['subject'],
                 text=form.cleaned_data['text'],
                 pub_date=timezone.now())
             post.save()

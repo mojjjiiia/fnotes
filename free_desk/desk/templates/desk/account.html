@@ -2,15 +2,21 @@
 
 {% block content %}
 
-<p>usernsme: {{ user.username }}</p>
-<p>Email: {{ user.email }}</p>
-<p>Last logged in: {{ user.last_login }}</p>
-<a href="{% url 'desk:change_pass'%}">Change password</a>
+    <header class="header">
+        <h1>My account</h1>
+    </header>
 
-<p>
-    <a href="{% url 'desk:index'%}">Back to the posts list</a>
-</p>
-<p>
-	<a href="{% url 'desk:sign_out' %}">Logout</a>
-</p>
+<div class="block-flex-column postlist-box formbox-small">
+    <p>My usernsme: {{ user.username }}</p>
+    <p>My Email: {{ user.email }}</p>
+    <p>Last logged in: {{ user.last_login }}</p>
+    <a href="{% url 'desk:change_pass'%}">Change password</a>
+</div>
+
+    <div class="header">
+        <h2>My posts:</h2>
+    </div>
+
+<!-- TODO MY POSTS LIST -->
+
 {% endblock %}
