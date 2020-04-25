@@ -1,35 +1,56 @@
 from django.shortcuts import render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from desk.models import Post
 from desk.forms import NewPostForm, SignUpForm, SignInForm, CustomPasswordChangeForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, models
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.views.generic import ListView, DetailView, FormView
 
 
-def index(request):
-    posts = Post.objects.all().order_by('-pub_date')
-    return render(request, 'desk/post_list.html', {'posts': posts})
+class IndexView(ListView):
+    model = Post
+    ordering = '-pub_date'
+
+#def index(request):
+#    posts = Post.objects.all().order_by('-pub_date')
+#    return render(request, 'desk/post_list.html', {'posts': posts})
 
 
-@login_required
-def new_post(request):
+class NewPostView(FormView):
+    form_class = NewPostForm
+    success_url = reverse_lazy('desk:index')
+    template_name = 'desk/new_post.html'
 
-    if request.method == 'POST':
-        form = NewPostForm(request.POST)
+    def form_valid(self, form):
+        post = Post(
+                    author=self.request.user,
+                    subject=form.cleaned_data['subject'],
+                    text=form.cleaned_data['text'],
+                    pub_date=timezone.now()
+                    )
 
-        if form.is_valid():
-            post = Post(
-                author=request.user,
-                subject=form.cleaned_data['subject'],
-                text=form.cleaned_data['text'],
-                pub_date=timezone.now())
-            post.save()
-            return HttpResponseRedirect(reverse('desk:index'))
+        post.save()
+        return super().form_valid(form)
 
-    form = NewPostForm()
-    return render(request, 'desk/new_post.html', {'form': form})
+#@login_required
+#def new_post(request):
+#
+#    if request.method == 'POST':
+#        form = NewPostForm(request.POST)
+#
+#        if form.is_valid():
+#            post = Post(
+#                author=request.user,
+#                subject=form.cleaned_data['subject'],
+#                text=form.cleaned_data['text'],
+#                pub_date=timezone.now())
+#            post.save()
+#            return HttpResponseRedirect(reverse('desk:index'))
+#
+#    form = NewPostForm()
+#    return render(request, 'desk/new_post.html', {'form': form})
 
 
 def sign_up(request):
@@ -112,7 +133,13 @@ def change_pass(request):
     return render(request, 'desk/change_pass.html', {'form': form})
 
 
-@login_required
-def account(request):
-    user = request.user
-    return render(request, 'desk/account.html', {'user': user})
+class AccountView(DetailView):
+    template_name = 'desk/account.html'
+
+    def get_object(self):
+        return self.request.user
+
+#@login_required
+#def account(request):
+#    user = request.user
+#    return render(request, 'desk/account.html', {'user': user})

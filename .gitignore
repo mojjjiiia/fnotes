@@ -1,2 +1,2 @@
-.env
+.*
 /free_desk/db.sqlite3
