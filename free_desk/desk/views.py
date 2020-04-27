@@ -13,7 +13,7 @@ class IndexView(ListView):
     model = Post
     ordering = '-pub_date'
 
-#def index(request):
+# def index(request):
 #    posts = Post.objects.all().order_by('-pub_date')
 #    return render(request, 'desk/post_list.html', {'posts': posts})
 
@@ -34,8 +34,8 @@ class NewPostView(FormView):
         post.save()
         return super().form_valid(form)
 
-#@login_required
-#def new_post(request):
+# @login_required
+# def new_post(request):
 #
 #    if request.method == 'POST':
 #        form = NewPostForm(request.POST)
@@ -53,60 +53,112 @@ class NewPostView(FormView):
 #    return render(request, 'desk/new_post.html', {'form': form})
 
 
-def sign_up(request):
-    form = SignUpForm()
+class SignUpView(FormView):
+    form_class = SignUpForm
+    success_url = reverse_lazy('desk:index')
+    template_name = 'desk/sign_up.html'
 
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
+    def form_valid(self, form):
+        form.save()
 
-            content = form.cleaned_data
-            user = authenticate(
-                username=content['username'],
-                password=content['password1']
+        user = authenticate(
+            username=form.cleaned_data['username'],
+            password=form.cleaned_data['password1']
+        )
+
+        login(self.request, user)
+
+        return super().form_valid(form)
+
+
+# def sign_up(request):
+#    form = SignUpForm()
+
+#    if request.method == 'POST':
+#        form = SignUpForm(request.POST)
+#        if form.is_valid():
+#            form.save()
+
+#            content = form.cleaned_data
+#            user = authenticate(
+#                username=content['username'],
+#                password=content['password1']
+#            )
+
+#            login(request, user)
+
+#            return HttpResponseRedirect(reverse('desk:index'))
+
+#    return (render(request, 'desk/sign_up.html', {'form': form}))
+
+
+class SignInView(FormView):
+    form_class = SignInForm
+    template_name = 'desk/sign_in.html'
+
+    def get_success_url(self):
+
+        if len(self.request.GET['next']) != 0:
+            success_url = self.request.GET['next']
+        else:
+            success_url = reverse_lazy('desk:index')
+
+        return str(success_url)
+
+    def form_valid(self, form):
+        user = authenticate(
+            username=form.cleaned_data['username'],
+            password=form.cleaned_data['password']
+        )
+
+        if not user:
+            form.error_message = 'Invalid username or password'
+
+            return render(
+                self.request,
+                'desk/sign_in.html',
+                {'form': form},
+                status=403
             )
 
-            login(request, user)
+        login(self.request, user)
 
-            return HttpResponseRedirect(reverse('desk:index'))
-
-    return (render(request, 'desk/sign_up.html', {'form': form}))
+        return super().form_valid(form)
 
 
-def sign_in(request):
-    form = SignInForm()
+# def sign_in(request):
+#    form = SignInForm()
 
-    if request.method == 'POST':
-        form = SignInForm(request.POST)
-        if form.is_valid():
+#    if request.method == 'POST':
+#        form = SignInForm(request.POST)
+#        if form.is_valid():
 
-            content = form.cleaned_data
-            user = authenticate(
-                username=content['username'],
-                password=content['password']
-            )
+#            content = form.cleaned_data
+#            user = authenticate(
+#                username=content['username'],
+#                password=content['password']
+#            )
 
-            if not user:
-                form.error_message = 'Invalid username or password'
+#            if not user:
+#                form.error_message = 'Invalid username or password'
 
-                return render(
-                    request,
-                    'desk/sign_in.html',
-                    {'form': form},
-                    status=403
-                )
+#                return render(
+#                    request,
+#                    'desk/sign_in.html',
+#                    {'form': form},
+#                    status=403
+#                )
 
-            login(request, user)
+#            login(request, user)
 
-            if len(request.GET['next']) != 0:
-                redirect_path = request.GET['next']
-            else:
-                redirect_path = reverse('desk:index')
+#            if len(request.GET['next']) != 0:
+#                redirect_path = request.GET['next']
+#            else:
+#                redirect_path = reverse('desk:index')
 
-            return HttpResponseRedirect(redirect_path)
+#            return HttpResponseRedirect(redirect_path)
 
-    return render(request, 'desk/sign_in.html', {'form': form})
+#    return render(request, 'desk/sign_in.html', {'form': form})
 
 
 def sign_out(request):
@@ -114,23 +166,39 @@ def sign_out(request):
     return HttpResponseRedirect(reverse('desk:index'))
 
 
-@login_required
-def change_pass(request):
-    user = request.user
-    form = CustomPasswordChangeForm(user)
+class ChangePassView(FormView):
+    template_name = 'desk/change_pass.html'
+    success_url = reverse_lazy('desk:index')
 
-    if request.method == 'POST':
-        form = CustomPasswordChangeForm(user, request.POST)
-        if form.is_valid():
-            content = form.cleaned_data
-            user.set_password(content['new_password1'])
-            user.save()
+    def get_form(self):
+        form = CustomPasswordChangeForm(self.request.user, self.request.POST)
+        return form
 
-            login(request, user)
+    def form_valid(self, form):
+        user = self.request.user
+        user.set_password(form.cleaned_data['new_password1'])
+        user.save()
+        login(self.request, self.request.user)
+        return super().form_valid(form)
 
-            return HttpResponseRedirect(reverse('desk:index'))
 
-    return render(request, 'desk/change_pass.html', {'form': form})
+# @login_required
+# def change_pass(request):
+#    user = request.user
+#    form = CustomPasswordChangeForm(user)
+
+#    if request.method == 'POST':
+#        form = CustomPasswordChangeForm(user, request.POST)
+#        if form.is_valid():
+#            content = form.cleaned_data
+#            user.set_password(content['new_password1'])
+#            user.save()
+
+#            login(request, user)
+
+#            return HttpResponseRedirect(reverse('desk:index'))
+
+#    return render(request, 'desk/change_pass.html', {'form': form})
 
 
 class AccountView(DetailView):

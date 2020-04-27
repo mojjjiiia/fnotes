@@ -60,7 +60,7 @@ class SignInForm(forms.Form):
 class CustomPasswordChangeForm(PasswordChangeForm):
 
     def __init__(self, *args, **kwargs):
-        super(CustomPasswordChangeForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields['old_password'].widget = forms.PasswordInput(attrs={'class': 'input-field', 'placeholder': ' Old password',
                                                                         }
