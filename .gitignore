@@ -1,2 +1,2 @@
 .*
-/free_desk/db.sqlite3
+*.sqlite3
