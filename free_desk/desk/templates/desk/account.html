@@ -13,6 +13,8 @@
     <a href="{% url 'desk:change_pass'%}">Change password</a>
 </div>
 
+{% if post_list %}
+
     <div class="header">
         <h2>My posts:</h2>
     </div>
@@ -24,8 +26,17 @@
           <p>{{ post.text }}</p>
           <p class="text-bold">{{ post.author }}</p>
           <p class="text-italic">{{ post.pub_date }}</p>
+          <form method="post">{% csrf_token %}<button class="btn btn-outline-danger" name="post_id" value={{post.id}}>Delete post!</button></form>
         </div>
       {% endfor %}
     </div>
+
+  {% else %}
+
+  <div class="header">
+      <h2>You haven't written anything yet</h2>
+  </div>
+
+  {% endif %}
 
 {% endblock %}

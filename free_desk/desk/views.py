@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from desk.models import Post
@@ -219,9 +219,12 @@ class AccountView(ListView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['user'] = self.request.user
-        for i, j in context.items():
-            print(i, j)
         return context
+
+    def post(self, request):
+        post = get_object_or_404(Post, pk=request.POST['post_id'])
+        post.delete()
+        return HttpResponseRedirect(reverse('desk:account'))
 
 #@login_required
 #def account(request):
