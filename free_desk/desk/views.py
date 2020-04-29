@@ -3,10 +3,9 @@ from django.urls import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from desk.models import Post
 from desk.forms import NewPostForm, SignUpForm, SignInForm, CustomPasswordChangeForm
-from django.contrib.auth import authenticate, login, logout, models
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
-from django.views.generic import ListView, DetailView, FormView
+from django.views.generic import ListView, FormView
 
 
 class IndexView(ListView):
@@ -201,11 +200,28 @@ class ChangePassView(FormView):
 #    return render(request, 'desk/change_pass.html', {'form': form})
 
 
-class AccountView(DetailView):
-    template_name = 'desk/account.html'
+#class AccountView(DetailView):
+#    template_name = 'desk/account.html'
+#
+#    def get_object(self):
+#        return self.request.user
 
-    def get_object(self):
-        return self.request.user
+class AccountView(ListView):
+    model = Post
+    template_name = 'desk/account.html'
+    ordering = '-pub_date'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(author=self.request.user)
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['user'] = self.request.user
+        for i, j in context.items():
+            print(i, j)
+        return context
 
 #@login_required
 #def account(request):

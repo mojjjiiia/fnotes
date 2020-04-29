@@ -17,6 +17,15 @@
         <h2>My posts:</h2>
     </div>
 
-<!-- TODO MY POSTS LIST -->
+    <div class="postlist">
+      {% for post in post_list %}
+        <div class="postlist-box bgcolor">
+          <h2>{{ post.subject }}</h2>
+          <p>{{ post.text }}</p>
+          <p class="text-bold">{{ post.author }}</p>
+          <p class="text-italic">{{ post.pub_date }}</p>
+        </div>
+      {% endfor %}
+    </div>
 
 {% endblock %}
