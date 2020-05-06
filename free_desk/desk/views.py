@@ -9,7 +9,7 @@ from django.views.generic import ListView, FormView
 
 
 class IndexView(ListView):
-    paginate_by = 10
+    paginate_by = 12
     model = Post
     ordering = '-pub_date'
 
@@ -211,6 +211,7 @@ class AccountView(ListView):
     model = Post
     template_name = 'desk/account.html'
     ordering = '-pub_date'
+    paginate_by = 12
 
     def get_queryset(self):
         queryset = super().get_queryset()
