@@ -9,6 +9,7 @@ from django.views.generic import ListView, FormView
 
 
 class IndexView(ListView):
+    paginate_by = 10
     model = Post
     ordering = '-pub_date'
 

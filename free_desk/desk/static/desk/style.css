@@ -24,7 +24,7 @@
     margin: 0 15px;
     padding: 10px;
     border: solid;
-    border-color: #54ed71
+    border-color: #54ed71;
 }
 
 .text-bold {
@@ -66,4 +66,35 @@
 
 .main-bgcolor {
     background-color: #e7f7ea;
+}
+
+
+
+.pagination > li > a
+{
+    background-color: #f1fff0;
+    color: #2ef052;
+    border-color: #2ef052;
+}
+
+.pagination > li
+{
+    background-color: #f1fff0;
+    color: #00ff40;
+    border-color: #2ef052;
+}
+
+.pagination > li > a:hover,
+.pagination > li > span:hover
+{
+    color: #f1fff0;
+    background-color: #2ef052;
+    border-color: #f1fff0;
+}
+
+.pagination > li:hover
+{
+    background-color: #f1fff0;
+    color: #00ff40;
+    border-color: #2ef052;
 }
