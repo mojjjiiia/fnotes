@@ -12,6 +12,13 @@
     max-width: 30em;
 }
 
+.postlist-flex {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+}
+
 .postlist-box {
     margin: 50px auto;
     padding: 10px;
@@ -19,6 +26,18 @@
     border-color: #54ed71;
     background-color: #f1fff0;
 }
+
+.postlist-box-flex {
+    flex: 0 0 25%;
+    min-width: 400px;
+    margin: 50px 3%;
+    padding: 10px;
+    border: solid;
+    border-color: #54ed71;
+    background-color: #f1fff0;
+    word-wrap: break-word;
+}
+
 
 .borderline {
     margin: 0 15px;
