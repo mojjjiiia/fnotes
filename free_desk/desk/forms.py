@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class NewPostForm(forms.Form):
@@ -45,6 +46,14 @@ class SignUpForm(UserCreationForm):
                    }
 
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        username = self.cleaned_data.get('username')
+        if email and User.objects.filter(email=email).exclude(username=username).exists():
+            raise forms.ValidationError('User with same email already exists')
+        return email
+
+
 class SignInForm(forms.Form):
     username = forms.CharField(max_length=100,
                                widget=forms.TextInput(attrs={'class': 'input-field', 'placeholder': 'Enter username',
@@ -75,3 +84,24 @@ class CustomPasswordChangeForm(PasswordChangeForm):
 
         for name, field in self.fields.items():
             field.help_text = None
+
+
+class ResetForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["email"]
+        widgets = {'email': forms.EmailInput(attrs={'class': 'input-field',
+                                                    'placeholder': 'Email',
+                                                    }
+                                             )
+                   }
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+
+        try:
+            user = User.objects.get(email=email)
+            return user.email
+
+        except ObjectDoesNotExist:
+            raise forms.ValidationError('User with this email does not exists')

@@ -2,20 +2,22 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from desk.models import Post
-from desk.forms import NewPostForm, SignUpForm, SignInForm, CustomPasswordChangeForm
+from desk.forms import NewPostForm, SignUpForm, SignInForm, CustomPasswordChangeForm, ResetForm
 from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
-from django.views.generic import ListView, FormView
+from django.views.generic import ListView, FormView, RedirectView
+from django.core.mail import send_mail
+from free_desk import settings
+from django.template import loader
+from django.contrib.auth.models import User
+import random
+import string
 
 
 class IndexView(ListView):
     paginate_by = 12
     model = Post
     ordering = '-pub_date'
-
-# def index(request):
-#    posts = Post.objects.all().order_by('-pub_date')
-#    return render(request, 'desk/post_list.html', {'posts': posts})
 
 
 class NewPostView(FormView):
@@ -34,24 +36,6 @@ class NewPostView(FormView):
         post.save()
         return super().form_valid(form)
 
-# @login_required
-# def new_post(request):
-#
-#    if request.method == 'POST':
-#        form = NewPostForm(request.POST)
-#
-#        if form.is_valid():
-#            post = Post(
-#                author=request.user,
-#                subject=form.cleaned_data['subject'],
-#                text=form.cleaned_data['text'],
-#                pub_date=timezone.now())
-#            post.save()
-#            return HttpResponseRedirect(reverse('desk:index'))
-#
-#    form = NewPostForm()
-#    return render(request, 'desk/new_post.html', {'form': form})
-
 
 class SignUpView(FormView):
     form_class = SignUpForm
@@ -59,6 +43,16 @@ class SignUpView(FormView):
     template_name = 'desk/sign_up.html'
 
     def form_valid(self, form):
+        context = ({'username': form.cleaned_data.get('username')})
+        send_mail(
+            'Registration on Free Desk.',
+            loader.render_to_string('desk/emails/registrationmail.txt', context),
+            settings.EMAIL_HOST_USER,
+            [form.cleaned_data['email']],
+            html_message=loader.render_to_string('desk/emails/registrationmail.html', context),
+            fail_silently=True,
+                   )
+
         form.save()
 
         user = authenticate(
@@ -69,27 +63,6 @@ class SignUpView(FormView):
         login(self.request, user)
 
         return super().form_valid(form)
-
-
-# def sign_up(request):
-#    form = SignUpForm()
-
-#    if request.method == 'POST':
-#        form = SignUpForm(request.POST)
-#        if form.is_valid():
-#            form.save()
-
-#            content = form.cleaned_data
-#            user = authenticate(
-#                username=content['username'],
-#                password=content['password1']
-#            )
-
-#            login(request, user)
-
-#            return HttpResponseRedirect(reverse('desk:index'))
-
-#    return (render(request, 'desk/sign_up.html', {'form': form}))
 
 
 class SignInView(FormView):
@@ -126,41 +99,6 @@ class SignInView(FormView):
         return super().form_valid(form)
 
 
-# def sign_in(request):
-#    form = SignInForm()
-
-#    if request.method == 'POST':
-#        form = SignInForm(request.POST)
-#        if form.is_valid():
-
-#            content = form.cleaned_data
-#            user = authenticate(
-#                username=content['username'],
-#                password=content['password']
-#            )
-
-#            if not user:
-#                form.error_message = 'Invalid username or password'
-
-#                return render(
-#                    request,
-#                    'desk/sign_in.html',
-#                    {'form': form},
-#                    status=403
-#                )
-
-#            login(request, user)
-
-#            if len(request.GET['next']) != 0:
-#                redirect_path = request.GET['next']
-#            else:
-#                redirect_path = reverse('desk:index')
-
-#            return HttpResponseRedirect(redirect_path)
-
-#    return render(request, 'desk/sign_in.html', {'form': form})
-
-
 def sign_out(request):
     logout(request)
     return HttpResponseRedirect(reverse('desk:index'))
@@ -181,31 +119,6 @@ class ChangePassView(FormView):
         login(self.request, self.request.user)
         return super().form_valid(form)
 
-
-# @login_required
-# def change_pass(request):
-#    user = request.user
-#    form = CustomPasswordChangeForm(user)
-
-#    if request.method == 'POST':
-#        form = CustomPasswordChangeForm(user, request.POST)
-#        if form.is_valid():
-#            content = form.cleaned_data
-#            user.set_password(content['new_password1'])
-#            user.save()
-
-#            login(request, user)
-
-#            return HttpResponseRedirect(reverse('desk:index'))
-
-#    return render(request, 'desk/change_pass.html', {'form': form})
-
-
-#class AccountView(DetailView):
-#    template_name = 'desk/account.html'
-#
-#    def get_object(self):
-#        return self.request.user
 
 class AccountView(ListView):
     model = Post
@@ -228,7 +141,29 @@ class AccountView(ListView):
         post.delete()
         return HttpResponseRedirect(reverse('desk:account'))
 
-#@login_required
-#def account(request):
-#    user = request.user
-#    return render(request, 'desk/account.html', {'user': user})
+
+class ResetView(FormView):
+    form_class = ResetForm
+    template_name = 'desk/reset.html'
+    success_url = reverse_lazy('desk:successfullreset')
+
+    def form_valid(self, form):
+        new_pas = "".join(random.sample(string.ascii_letters + string.digits, 8))
+        user_email = form.cleaned_data['email']
+        user = User.objects.get(email=user_email)
+        user.set_password(new_pas)
+
+        context = {'password': new_pas, 'username': user.username}
+
+        send_mail(
+            'Password reset on Free Desk.',
+            loader.render_to_string('desk/emails/resetmail.txt', context),
+            settings.EMAIL_HOST_USER,
+            [user.email],
+            html_message=loader.render_to_string('desk/emails/resetmail.html', context),
+            fail_silently=True,
+                   )
+
+        user.save()
+
+        return super().form_valid(form)

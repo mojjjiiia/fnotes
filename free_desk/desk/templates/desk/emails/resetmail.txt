@@ -1,0 +1,3 @@
+Hi {{username}}!
+Your new password: {{password}}
+You can change it in "My account" section

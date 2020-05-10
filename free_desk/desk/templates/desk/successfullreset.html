@@ -1,0 +1,34 @@
+{% extends 'desk/base.html' %}
+
+{% block content %}
+<script >
+setTimeout(function(){location.href='/index'} , 5000);
+
+var countDownTime = 5;
+
+var countdownfunction = setInterval(function() {
+
+    var now = countDownTime;
+
+    document.getElementById("counter").innerHTML = "You`ll be redirected to main page over " + now + " sec!";
+    countDownTime = countDownTime - 1;
+
+    if (countDownTime < 0) {
+        clearInterval(countdownfunction);
+        document.getElementById("counter").innerHTML = "You`ll be redirected to main page now! (If no, just press 'Main Page' on navigation bar:)";
+    }
+}, 1000);
+
+</script>
+
+<header class="header">
+	<h1>Password Reseted!</h1>
+  <h3>Check your postbox for new password.</h3>
+</header>
+<div class="borderline formbox-large" style="display: flex; justify-content: center; align-items: center; height: 150px;">
+	<p id="counter" style="font-size: 1.3em; text-align: center;"></p>
+</div>
+
+
+
+{% endblock %}
