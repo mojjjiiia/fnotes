@@ -1,0 +1,21 @@
+{% extends 'desk/base.html' %}
+
+{% block content %}
+
+<header class="header">
+	<h1>Reset password</h1>
+</header>
+<div class="borderline formbox-small">
+	<form class="block-flex-column" action="{% url 'desk:reset' %}" method="post">
+					{% csrf_token %}
+					<label for="id_email">Email</label>
+					{{ form.email }}
+					<input class="btn btn-outline-success" type="submit" value="Reset!">
+			<div class="error">
+        {{form.errors.email}}
+			</div>
+	</form>
+</div>
+
+
+{% endblock %}
