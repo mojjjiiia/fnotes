@@ -6,7 +6,7 @@ from django.views.generic.base import TemplateView
 app_name = 'desk'
 
 urlpatterns = [
-    path('/', views.IndexView.as_view(), name='index'),
+    path('', views.IndexView.as_view(), name='index'),
     path('new_post/', login_required(views.NewPostView.as_view()), name='new_post'),
     path('sign_up/', views.SignUpView.as_view(), name='sign_up'),
     path('sign_in/', views.SignInView.as_view(), name='sign_in'),
