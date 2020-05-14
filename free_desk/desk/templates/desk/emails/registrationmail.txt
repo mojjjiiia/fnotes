@@ -1,2 +1,0 @@
-Hello {{username}}! Welcome to free desk! You are registered now!
-Feel free to write some silly things on our wall:).

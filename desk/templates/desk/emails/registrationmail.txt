@@ -1,0 +1,2 @@
+Hello {{username}}! Welcome to fNoter! You are registered now!
+Feel free to write some silly things on our wall:).
