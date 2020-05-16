@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 
 class NewPostForm(forms.Form):
@@ -45,13 +45,19 @@ class SignUpForm(UserCreationForm):
                                              ),
                    }
 
-
     def clean_email(self):
-        email = self.cleaned_data.get('email')
+        email = self.cleaned_data.get('email').lower()
         username = self.cleaned_data.get('username')
         if email and User.objects.filter(email=email).exclude(username=username).exists():
             raise forms.ValidationError('User with same email already exists')
         return email
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        query_set = User.objects.filter(username__iexact=username)
+        if len(query_set) != 0:
+            raise forms.ValidationError('User with same username already exists')
+        return username
 
 
 class SignInForm(forms.Form):
@@ -97,7 +103,7 @@ class ResetForm(forms.ModelForm):
                    }
 
     def clean_email(self):
-        email = self.cleaned_data.get('email')
+        email = self.cleaned_data.get('email').lower()
 
         try:
             user = User.objects.get(email=email)
