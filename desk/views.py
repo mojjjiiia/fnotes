@@ -79,10 +79,19 @@ class SignInView(FormView):
         return str(success_url)
 
     def form_valid(self, form):
-        user = authenticate(
-            username=form.cleaned_data['username'],
-            password=form.cleaned_data['password']
-        )
+        # Getting user objects with username__iexact,to avoid case sensitivity.
+        # form_username is username printed in form by user.
+        # So we can get user object from base with username in a different case
+        # then requested by user. i.e alexey same as AlExEy
+        try:
+            form_username = form.cleaned_data['username']
+            user = User.objects.get(username__iexact=form_username)
+            user = authenticate(
+                username=user.username,
+                password=form.cleaned_data['password']
+            )
+        except User.DoesNotExist:
+            user = None
 
         if not user:
             form.error_message = 'Invalid username or password'
